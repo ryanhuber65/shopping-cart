@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Shopping Cart</title>
+    <link rel="stylesheet" media="all" type="text/css" href="shopping.css">
+    <link rel="stylesheet" type="text/css" href="jquery-ui.css">  
+    <script src="jquery-2.1.1.js"></script>
+    <script src="jquery-ui.js"></script>	
+    <script src="shopping.js"></script>
+</head>
+<html lang="en">
+<body>
+    <main id="purchaseScreen">
+        <!--purchaseDetails section (user input)-->
+        <section id="purchaseDetails" style="display:normal">
+            <!--form header-->
+            <h2>Buy Item</h2>
+            <!--create the user input form-->
+            <form method="post">
+                <div class="formRow">
+                    <label for="invoiceDate">Invoice Date:</label>
+                     <!--instead of using input type="date", I used datepicker (from a JavaScript library)-->
+                    <!--it's more efficient this way for use across different browsers that don't support type="date"-->
+                    <!--such as Internet Explorer and Safari-->
+                    <!--https://jqueryui.com/datepicker/-->
+                    <!--https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date#Specifications-->
+                    <input required name="invoiceDate" id="invoiceDate" type="text" class="validated" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}"/>
+                </div>
+                <div class="formRow">
+                    <label for="itemID">Item ID:</label>
+                    <!--user must enter exactly 8 digits according to pattern="\d{8}"-->
+                    <input required name="itemID" type="text" class="validated" id="itemID" pattern="\d{8}" />
+                </div>
+                <div class="formRow">
+                    <label for="itemName">Item name:</label>
+                    <!--user must enter between 5 and 25 characters-->
+                    <input required name="itemName" type="text" class="validated" id="itemName" pattern=".{5,25}" />
+                </div>
+                <div class="formRow">
+                    <label for="itemDesc">Item Description:</label>
+                    <!--user must enter atleast one character up to a maximum of 300-->
+                    <textarea required cols="40" rows="6" name="itemDesc" id="itemDesc" class="validated" maxlength="300"></textarea>
+                    <span class="textCount"></span>
+                </div>
+                <div class="formRow"> 
+                    <label for="itemQty">Item Quantity:</label>
+                    <!--user must enter atleast 1 and must be between 0-9 (integers that will be accepted)-->
+                    <input required name="itemQty" id="itemQty" type="number" class="validated" min="1" pattern="[0-9]" />
+                </div>
+                <div class="formRow">
+                    <label for="itemUPrice">Item Unit Price:</label>
+                    <!--user must enter a minimum of 0.01 and only 2 decimal places-->
+                    <!--more information on step is available at this link-->
+                    <!--The step attribute specifies the legal number intervals for an <input> element.-->
+                    <!--https://www.w3schools.com/tags/att_input_step.asp-->
+                    <input required name="itemUPrice" id="itemUPrice" type="number" class="validated" min="0.01" step="0.01" pattern="[0-9]" />
+                </div>
+                <div class="formRow">
+                    <label for="itemCost">Item Cost:</label>
+                    <!--calculated field that is readonly and can't be edited by the user-->
+                    <input required readonly name="itemCost" id="itemCost" type="number" class="validated" />
+                </div>
+                <div class="formRow">
+                    <input style="width:100px" type="submit" title="submit" value="Add To Cart" />
+                </div>
+            </form>
+        </section>
+        <!--shopping cart section (displays stored data)-->
+        <section id="shoppingCart">
+            <!--create a table that stores the inputed data under each column header-->
+            <table>
+
+                <thead>
+                <th>Invoice Date</th>
+                <th>Item ID</th>
+                <th>Item Name</th>
+                <th>Item Description</th>
+                <th>Item Quantity</th>
+                <th>Item Unit Price</th>
+                <th>Item Cost</th>
+                <th><a class="emptyCart" href="#">Empty Cart</a></th>
+                </thead>
+                <tbody></tbody>
+                <!--caption = name of the section (Shopping Cart)-->
+                <caption>Shopping Cart</caption>
+            </table>
+           <!--I left the width for the inputs at 200px, just incase of big numbers.-->
+            <!--create the subtotal, tax, shipping and total labels and textboxes (readonly)-->
+                <div class="totalsRow" id="totalrow">
+                    <label for="subtotal">Subtotal:</label>
+                    <!--input can't be edited by the user-->
+                    <input readonly name="subtotal" id="subtotal" type="text" />
+                </div>
+                <div class="totalsRow" id="totalrow">
+                    <label for="shipping">Shipping:</label>
+                    <!--input can't be edited by the user-->
+                    <input readonly name="shipping" id="shipping" type="text" />
+                </div>
+                <div class="totalsRow" id="totalrow">
+                    <label for="tax">Tax:</label>
+                    <!--input can't be edited by the user-->
+                    <input readonly name="tax" id="tax" type="text" />
+                </div>
+                <div class="totalsRow" id="totalrow">
+                    <label for="total">Total:</label>
+                    <!--input can't be edited by the user-->
+                    <input readonly name="total" id="total" type="text" />
+                </div>
+        </section>
+
+    </main>
+
+    <script>
+        //function that initializes the datepicker() to open up a small interactive calendar
+        $(function () {
+            $("#invoiceDate").datepicker();
+        });
+        //calculation function to get the item cost
+        //initializes on input (immediately after a value is typed in
+        $("#itemQty, #itemUPrice").on("input", function () {
+        //item quantity * item price and assign it to the "cost" variable
+            var cost = $("#itemQty").val() * $("#itemUPrice").val();
+        //output the result to the itemCost textbox
+            $("#itemCost").val(cost.toFixed(2));
+        });
+        //function to initialize the jquery functions
+        $(document).ready(function (evt) {
+            //creates an object of the inputed values in the form (within main: purchaseScreen)
+            //and initialize the purchaseScreen (main) function in the shopping.js file
+            var mainElement = document.getElementById('purchaseScreen');
+            var screen = purchaseScreen(mainElement);
+            //initialize the init() function with the form stored as a javascript object in variable "screen"
+            screen.init();
+        });
+        
+
+    </script>
+</body>
+
+
+
+</html>
+
